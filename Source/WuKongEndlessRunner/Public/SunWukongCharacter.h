@@ -23,6 +23,14 @@ UCLASS()
 class WUKONGENDLESSRUNNER_API ASunWukongCharacter : public ACharacter, public IHitReactInterface
 {
 	GENERATED_BODY()
+	
+	/** Side view camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* SideViewCameraComponent;
+
+	/** Camera boom positioning the camera beside the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
 
 public:
 	// Sets default values for this character's properties
