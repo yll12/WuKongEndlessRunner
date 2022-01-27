@@ -6,8 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "WuKongEndlessRunnerGameMode.generated.h"
 
-UCLASS(minimalapi)
-class AWuKongEndlessRunnerGameMode : public AGameModeBase
+UCLASS()
+class WUKONGENDLESSRUNNER_API AWuKongEndlessRunnerGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
