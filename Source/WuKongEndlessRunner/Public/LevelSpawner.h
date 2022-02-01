@@ -34,7 +34,7 @@ public:
 	FVector SpawnLocation = FVector();
 
 	UFUNCTION()
-		void SpawnLevel();
+		void SpawnLevel(TSubclassOf<ABaseLevel> levelToSpawn);
 
 	UFUNCTION()
 		void OnTriggerBoxOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

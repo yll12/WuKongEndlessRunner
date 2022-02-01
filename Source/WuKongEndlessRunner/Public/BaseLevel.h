@@ -31,19 +31,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USceneComponent* RootSceneComponent;
 
-//	UPROPERTY(EditAnywhere)
-//		TSubclassOf<ABaseLevel> Level1;
-
-//	APawn* Player;
-
 public:	
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	FVector SpawnLocation = FVector();
-	FRotator SpawnRotation = FRotator();
-	FActorSpawnParameters SpawnInfo = FActorSpawnParameters();
 
 	FORCEINLINE UBoxComponent* GetNextLevelSpawnTriggerBox()
 	{
@@ -54,18 +45,5 @@ public:
 	{
 		return NextLevelSpawnLocation;
 	}
-
-//	UPROPERTY(EditAnywhere)
-//		TSubclassOf<ULevelManager> LevelManagerType;
-
-//	UPROPERTY(BlueprintReadOnly)
-//		ULevelManager* LevelManagerRef;
-
-//	UPROPERTY(EditAnywhere)
-//		TArray<TSubclassOf<ABaseLevel>> LevelList;
-
-	UFUNCTION()
-		void OnTriggerBoxOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 };
