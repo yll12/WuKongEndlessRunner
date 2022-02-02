@@ -17,6 +17,12 @@ ADestructibleActorExploded::ADestructibleActorExploded()
 
 	DestructibleComponent = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestructibleComponent"));
 	DestructibleComponent->SetupAttachment(RootSceneComponent);
+	DestructibleComponent->SetEnableGravity(false);
+
+	// This didn't work - since DestructibleComponent is deprecated, will just create BP_ADestructibleActorExploded with these changes
+//	DestructibleComponent->SetCollisionProfileName(TEXT("Custom"));
+//	DestructibleComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+//	DestructibleComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
 }
 
@@ -24,7 +30,7 @@ ADestructibleActorExploded::ADestructibleActorExploded()
 void ADestructibleActorExploded::BeginPlay()
 {
 	Super::BeginPlay();
-	DestructibleComponent->ApplyRadiusDamage(22, GetActorLocation(), 0, 50000.0f, true);
+	DestructibleComponent->ApplyRadiusDamage(5, GetActorLocation(), 0, 50000.0f, true);
 	DestroyActorAfterDelay(5);
 }
 
