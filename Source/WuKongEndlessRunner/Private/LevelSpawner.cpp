@@ -27,17 +27,27 @@ void ALevelSpawner::Tick(float DeltaTime)
 }
 
 void ALevelSpawner::SpawnLevel(TSubclassOf<ABaseLevel> levelToSpawn) {
-	ABaseLevel* nextLevel = GetWorld()->SpawnActor<ABaseLevel>(levelToSpawn, SpawnLocation, FRotator(0, 0, 0));
+	nextLevel = GetWorld()->SpawnActor<ABaseLevel>(levelToSpawn, SpawnLocation, FRotator(0, 0, 0));
 	if (nextLevel) {
 		nextLevel->GetNextLevelSpawnTriggerBox()->OnComponentBeginOverlap.AddDynamic(this, &ALevelSpawner::OnTriggerBoxOverlapBegin);
 		SpawnLocation = nextLevel->GetNextLevelSpawnLocation()->GetComponentTransform().GetTranslation();
 	}
+	TArray<FString> StrArr;
+	StrArr.Add(TEXT("Hello"));
+	SpawnedLevels.Add(nextLevel);
+	UE_LOG(LogTemp, Warning, TEXT("Some warning message"));
+//	UE_LOG(LogTemp, Warning, TEXT("Spawned levels %s"), *StrArr.ToString());
 
+	for (int32 b = 0; b < SpawnedLevels.Num(); b++)
+	{
+		UE_LOG(LogClass, Log, TEXT("Names: %s"), *(SpawnedLevels[b]->GetName()));
+	}
 }
 
 void ALevelSpawner::OnTriggerBoxOverlapBegin(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	int32 levelToSpawn = FMath::RandRange(0, RepeatingLevels.Num() - 1);
+	nextLevel->GetNextLevelSpawnTriggerBox()->DestroyComponent();
 	SpawnLevel(RepeatingLevels[levelToSpawn]);
 }
 

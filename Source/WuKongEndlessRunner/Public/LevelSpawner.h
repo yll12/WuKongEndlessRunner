@@ -21,6 +21,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	TArray<ABaseLevel*> SpawnedLevels;
+
+	ABaseLevel* nextLevel;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -27,7 +27,6 @@ ABaseLevel::ABaseLevel()
 void ABaseLevel::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -36,4 +35,3 @@ void ABaseLevel::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
