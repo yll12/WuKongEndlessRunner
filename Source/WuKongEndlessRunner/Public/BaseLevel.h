@@ -29,6 +29,9 @@ protected:
 		UBoxComponent* NextLevelSpawnLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UBoxComponent* BackTrackBlocker;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USceneComponent* RootSceneComponent;
 
 public:	
@@ -44,6 +47,11 @@ public:
 	FORCEINLINE UBoxComponent* GetNextLevelSpawnLocation()
 	{
 		return NextLevelSpawnLocation;
+	}
+
+	FORCEINLINE UBoxComponent* GetBackTrackBlocker()
+	{
+		return BackTrackBlocker;
 	}
 
 };

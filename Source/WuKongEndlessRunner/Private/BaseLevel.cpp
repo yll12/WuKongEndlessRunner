@@ -20,6 +20,10 @@ ABaseLevel::ABaseLevel()
 
 	NextLevelSpawnLocation = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnLocation"));
 	NextLevelSpawnLocation->SetupAttachment(RootSceneComponent);
+	
+	BackTrackBlocker = CreateDefaultSubobject<UBoxComponent>(TEXT("BackTrackBlocker"));
+	BackTrackBlocker->SetupAttachment(RootSceneComponent);
+//	BackTrackBlocker->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
 }
 
