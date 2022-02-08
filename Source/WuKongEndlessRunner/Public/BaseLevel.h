@@ -9,6 +9,14 @@
 class UBoxComponent;
 class USceneComponent;
 
+UENUM(BlueprintType)
+enum class ELevelType : uint8 {
+	Flat       UMETA(DisplayName = "Flat"),
+	Slope      UMETA(DisplayName = "Slope"),
+};
+
+static const ELevelType AllLevelTypes[] = { ELevelType::Flat, ELevelType::Slope };
+
 UCLASS()
 class WUKONGENDLESSRUNNER_API ABaseLevel : public AActor
 {
@@ -38,6 +46,9 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		ELevelType LevelType;
 
 	FORCEINLINE UBoxComponent* GetNextLevelSpawnTriggerBox()
 	{
