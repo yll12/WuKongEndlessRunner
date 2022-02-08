@@ -19,7 +19,7 @@ void ALevelSpawner::BeginPlay()
 	Super::BeginPlay();
 	InitializeRepeatingLevelsMap();
 	SpawnLevel(StartingLevelRef);
-	SpawnLevel(RepeatingLevels[FMath::RandRange(0, RepeatingLevels.Num() - 1)]);
+	SpawnLevel(RandomLevel());
 
 }
 
@@ -73,24 +73,29 @@ void ALevelSpawner::OnTriggerBoxOverlapBegin(UPrimitiveComponent* HitComp, AActo
 
 TSubclassOf<ABaseLevel> ALevelSpawner::GetNextLevelToSpawn()
 {
-	TSubclassOf<ABaseLevel> levelToSpawn;
-
 	if (isAllSpawnedLevels(ELevelType::Flat)) {
-		// Random Slope level next
-		levelToSpawn = RepeatingLevelsMap[ELevelType::Slope][FMath::RandRange(0, RepeatingLevelsMap[ELevelType::Slope].Num() - 1)];
-		return levelToSpawn;
+		return RandomLevel(ELevelType::Slope);;
+	}
+	switch (LastSpawnedLevel->LevelType) {
+		case ELevelType::Slope:
+			// Random Flat level next (no two slope level consecutively)
+			return RandomLevel(ELevelType::Flat);
+			break;
+		case ELevelType::Flat:
+			return RandomLevel();
 	}
 
-	switch (LastSpawnedLevel->LevelType) {
-	case ELevelType::Slope:
-		// Random Flat level next (no two slope level consecutively)
-		levelToSpawn = RepeatingLevelsMap[ELevelType::Flat][FMath::RandRange(0, RepeatingLevelsMap[ELevelType::Flat].Num() - 1)];
-		break;
-	case ELevelType::Flat:
-		// Random level
-		levelToSpawn = RepeatingLevels[FMath::RandRange(0, RepeatingLevels.Num() - 1)];
-	}
-	return levelToSpawn;
+	return RandomLevel();
+}
+
+TSubclassOf<ABaseLevel> ALevelSpawner::RandomLevel(ELevelType levelType) 
+{
+	return RepeatingLevelsMap[levelType][FMath::RandRange(0, RepeatingLevelsMap[levelType].Num() - 1)];
+}
+
+TSubclassOf<ABaseLevel> ALevelSpawner::RandomLevel()
+{
+	return RepeatingLevels[FMath::RandRange(0, RepeatingLevels.Num() - 1)];
 }
 
 bool ALevelSpawner::isAllSpawnedLevels(ELevelType levelType)

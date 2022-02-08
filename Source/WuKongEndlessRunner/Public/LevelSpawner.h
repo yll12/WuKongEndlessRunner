@@ -25,6 +25,8 @@ protected:
 	void InitializeRepeatingLevelsMap();
 
 	TSubclassOf<ABaseLevel> GetNextLevelToSpawn();
+	TSubclassOf<ABaseLevel> RandomLevel(ELevelType levelType);
+	TSubclassOf<ABaseLevel> RandomLevel();
 
 	bool isAllSpawnedLevels(ELevelType levelType);
 
