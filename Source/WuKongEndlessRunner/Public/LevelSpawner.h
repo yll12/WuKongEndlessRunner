@@ -24,7 +24,7 @@ protected:
 
 	void InitializeRepeatingLevelsMap();
 
-	TSubclassOf<ABaseLevel> selectNextLevelToSpawn(ABaseLevel* lastSpawnedLevelRef);
+	TSubclassOf<ABaseLevel> GetNextLevelToSpawn();
 
 	bool isAllSpawnedLevels(ELevelType levelType);
 

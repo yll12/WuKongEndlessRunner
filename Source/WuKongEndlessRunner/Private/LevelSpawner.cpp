@@ -19,6 +19,7 @@ void ALevelSpawner::BeginPlay()
 	Super::BeginPlay();
 	InitializeRepeatingLevelsMap();
 	SpawnLevel(StartingLevelRef);
+	SpawnLevel(RepeatingLevels[FMath::RandRange(0, RepeatingLevels.Num() - 1)]);
 
 }
 
@@ -41,6 +42,10 @@ void ALevelSpawner::Tick(float DeltaTime)
 }
 
 void ALevelSpawner::SpawnLevel(TSubclassOf<ABaseLevel> levelToSpawn) {
+	if (LastSpawnedLevel) {
+		LastSpawnedLevel->GetNextLevelSpawnTriggerBox()->DestroyComponent();
+	}
+
 	LastSpawnedLevel = GetWorld()->SpawnActor<ABaseLevel>(levelToSpawn, SpawnLocation, FRotator(0, 0, 0));
 	if (LastSpawnedLevel) {
 		LastSpawnedLevel->GetNextLevelSpawnTriggerBox()->OnComponentBeginOverlap.AddDynamic(this, &ALevelSpawner::OnTriggerBoxOverlapBegin);
@@ -63,12 +68,10 @@ void ALevelSpawner::DespawnLevelIfMaxActive()
 
 void ALevelSpawner::OnTriggerBoxOverlapBegin(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	TSubclassOf<ABaseLevel> levelToSpawn = selectNextLevelToSpawn(LastSpawnedLevel);
-	LastSpawnedLevel->GetNextLevelSpawnTriggerBox()->DestroyComponent();
-	SpawnLevel(levelToSpawn);
+	SpawnLevel(GetNextLevelToSpawn());
 }
 
-TSubclassOf<ABaseLevel> ALevelSpawner::selectNextLevelToSpawn(ABaseLevel* lastSpawnedLevelRef)
+TSubclassOf<ABaseLevel> ALevelSpawner::GetNextLevelToSpawn()
 {
 	TSubclassOf<ABaseLevel> levelToSpawn;
 
@@ -78,7 +81,7 @@ TSubclassOf<ABaseLevel> ALevelSpawner::selectNextLevelToSpawn(ABaseLevel* lastSp
 		return levelToSpawn;
 	}
 
-	switch (lastSpawnedLevelRef->LevelType) {
+	switch (LastSpawnedLevel->LevelType) {
 	case ELevelType::Slope:
 		// Random Flat level next (no two slope level consecutively)
 		levelToSpawn = RepeatingLevelsMap[ELevelType::Flat][FMath::RandRange(0, RepeatingLevelsMap[ELevelType::Flat].Num() - 1)];
