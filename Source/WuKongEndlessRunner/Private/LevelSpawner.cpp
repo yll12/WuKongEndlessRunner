@@ -10,14 +10,28 @@ ALevelSpawner::ALevelSpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
 }
 
 // Called when the game starts or when spawned
 void ALevelSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+	InitializeRepeatingLevelsMap();
 	SpawnLevel(StartingLevelRef);
 
+}
+
+void ALevelSpawner::InitializeRepeatingLevelsMap()
+{
+	for (ELevelType levelType : AllLevelTypes) {
+		RepeatingLevelsMap.Add(levelType, {});
+	}
+
+	for (TSubclassOf<ABaseLevel> level : RepeatingLevels) {
+		ELevelType levelType = level->GetDefaultObject<ABaseLevel>()->LevelType;
+		RepeatingLevelsMap[levelType].Add(level);
+	}
 }
 
 // Called every frame
@@ -27,11 +41,11 @@ void ALevelSpawner::Tick(float DeltaTime)
 }
 
 void ALevelSpawner::SpawnLevel(TSubclassOf<ABaseLevel> levelToSpawn) {
-	nextLevel = GetWorld()->SpawnActor<ABaseLevel>(levelToSpawn, SpawnLocation, FRotator(0, 0, 0));
-	if (nextLevel) {
-		nextLevel->GetNextLevelSpawnTriggerBox()->OnComponentBeginOverlap.AddDynamic(this, &ALevelSpawner::OnTriggerBoxOverlapBegin);
-		SpawnLocation = nextLevel->GetNextLevelSpawnLocation()->GetComponentTransform().GetTranslation();
-		SpawnedLevels.Emplace(nextLevel);
+	LastSpawnedLevel = GetWorld()->SpawnActor<ABaseLevel>(levelToSpawn, SpawnLocation, FRotator(0, 0, 0));
+	if (LastSpawnedLevel) {
+		LastSpawnedLevel->GetNextLevelSpawnTriggerBox()->OnComponentBeginOverlap.AddDynamic(this, &ALevelSpawner::OnTriggerBoxOverlapBegin);
+		SpawnLocation = LastSpawnedLevel->GetNextLevelSpawnLocation()->GetComponentTransform().GetTranslation();
+		SpawnedLevels.Emplace(LastSpawnedLevel);
 	}
 	DespawnLevelIfMaxActive();
 }
@@ -49,40 +63,23 @@ void ALevelSpawner::DespawnLevelIfMaxActive()
 
 void ALevelSpawner::OnTriggerBoxOverlapBegin(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
-	TMap<ELevelType, TArray<TSubclassOf<ABaseLevel>>> RepeatingLevelsMap;
-	for (ELevelType levelType : AllLevelTypes) {
-		UE_LOG(LogClass, Log, TEXT("Test"));
-		TMap<ELevelType, FString> FruitMap;
-		FruitMap.Add(levelType, TEXT("Pineapple"));
-		UE_LOG(LogClass, Log, TEXT("Test enum: %s"), *FruitMap[levelType]);
+	TSubclassOf<ABaseLevel> levelToSpawn = selectNextLevelToSpawn(LastSpawnedLevel);
+	LastSpawnedLevel->GetNextLevelSpawnTriggerBox()->DestroyComponent();
+	SpawnLevel(levelToSpawn);
+}
 
-		
-		RepeatingLevelsMap.Add(levelType, {});
-	}
-
-	
-	for (TSubclassOf<ABaseLevel> level : RepeatingLevels) {
-		ELevelType levelType = level->GetDefaultObject<ABaseLevel>()->LevelType;
-		RepeatingLevelsMap[levelType].Add(level);
-		UE_LOG(LogClass, Log, TEXT("Testing: %s!"), *RepeatingLevelsMap[levelType][0]->GetName());
-	}
-	int32 levelToSpawn;
-
-	switch (nextLevel->LevelType) {
+TSubclassOf<ABaseLevel> ALevelSpawner::selectNextLevelToSpawn(ABaseLevel* lastSpawnedLevelRef)
+{
+	TSubclassOf<ABaseLevel> levelToSpawn;
+	switch (lastSpawnedLevelRef->LevelType) {
 	case ELevelType::Slope:
-		UE_LOG(LogClass, Log, TEXT("Inside slope!"));
-		levelToSpawn = FMath::RandRange(0, RepeatingLevelsMap[ELevelType::Flat].Num() - 1);
-		nextLevel->GetNextLevelSpawnTriggerBox()->DestroyComponent();
-		SpawnLevel(RepeatingLevelsMap[ELevelType::Flat][levelToSpawn]);
+		// Random Flat level next
+		levelToSpawn = RepeatingLevelsMap[ELevelType::Flat][FMath::RandRange(0, RepeatingLevelsMap[ELevelType::Flat].Num() - 1)];
 		break;
 	case ELevelType::Flat:
-		UE_LOG(LogClass, Log, TEXT("Inside Flat!"));
-		levelToSpawn = FMath::RandRange(0, RepeatingLevels.Num() - 1);
-		nextLevel->GetNextLevelSpawnTriggerBox()->DestroyComponent();
-		SpawnLevel(RepeatingLevels[levelToSpawn]);
+		// Random level
+		levelToSpawn = RepeatingLevels[FMath::RandRange(0, RepeatingLevels.Num() - 1)];
 	}
-
-	
+	return levelToSpawn;
 }
 

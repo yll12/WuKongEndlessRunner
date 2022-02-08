@@ -7,6 +7,7 @@
 #include "LevelSpawner.generated.h"
 
 class ABaseLevel;
+enum class ELevelType : uint8;
 
 UCLASS()
 class WUKONGENDLESSRUNNER_API ALevelSpawner : public AActor
@@ -21,10 +22,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void InitializeRepeatingLevelsMap();
+
+	TSubclassOf<ABaseLevel> selectNextLevelToSpawn(ABaseLevel* lastSpawnedLevelRef);
+
 	UPROPERTY()
 	TArray<ABaseLevel*> SpawnedLevels;
 
-	ABaseLevel* nextLevel;
+	TMap<ELevelType, TArray<TSubclassOf<ABaseLevel>>> RepeatingLevelsMap;
+
+	ABaseLevel* LastSpawnedLevel;
 	FVector SpawnLocation = FVector();
 
 	const int MAX_LEVELS_ACTIVE = 6;
@@ -46,6 +53,5 @@ public:
 
 	UFUNCTION()
 		void OnTriggerBoxOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 };
