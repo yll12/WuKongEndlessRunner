@@ -31,19 +31,18 @@ void ALevelSpawner::SpawnLevel(TSubclassOf<ABaseLevel> levelToSpawn) {
 	if (nextLevel) {
 		nextLevel->GetNextLevelSpawnTriggerBox()->OnComponentBeginOverlap.AddDynamic(this, &ALevelSpawner::OnTriggerBoxOverlapBegin);
 		SpawnLocation = nextLevel->GetNextLevelSpawnLocation()->GetComponentTransform().GetTranslation();
+		SpawnedLevels.Emplace(nextLevel);
 	}
-	SpawnedLevels.Emplace(nextLevel);
+	DespawnLevelIfMaxActive();
+}
 
-	for (int32 b = 0; b < SpawnedLevels.Num(); b++)
-	{
-		UE_LOG(LogClass, Log, TEXT("Names: %s"), *(SpawnedLevels[b]->GetName()));
-	}
-
-	UE_LOG(LogClass, Log, TEXT("End"));
-
-	if (SpawnedLevels.Num() > 6) {
+void ALevelSpawner::DespawnLevelIfMaxActive()
+{
+	if (SpawnedLevels.Num() > MAX_LEVELS_ACTIVE) {
 		SpawnedLevels[0]->Destroy();
 		SpawnedLevels.RemoveAt(0);
+
+		// Activate backtrack blocker
 		SpawnedLevels[1]->GetBackTrackBlocker()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	}
 }

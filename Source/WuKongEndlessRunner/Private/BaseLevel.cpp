@@ -23,7 +23,6 @@ ABaseLevel::ABaseLevel()
 	
 	BackTrackBlocker = CreateDefaultSubobject<UBoxComponent>(TEXT("BackTrackBlocker"));
 	BackTrackBlocker->SetupAttachment(RootSceneComponent);
-//	BackTrackBlocker->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
 }
 

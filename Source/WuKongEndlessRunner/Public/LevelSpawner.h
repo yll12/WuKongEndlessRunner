@@ -25,6 +25,9 @@ protected:
 	TArray<ABaseLevel*> SpawnedLevels;
 
 	ABaseLevel* nextLevel;
+	FVector SpawnLocation = FVector();
+
+	const int MAX_LEVELS_ACTIVE = 6;
 
 public:	
 	// Called every frame
@@ -36,10 +39,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<TSubclassOf<ABaseLevel>> RepeatingLevels;
 
-	FVector SpawnLocation = FVector();
-
 	UFUNCTION()
 		void SpawnLevel(TSubclassOf<ABaseLevel> levelToSpawn);
+
+	void DespawnLevelIfMaxActive();
 
 	UFUNCTION()
 		void OnTriggerBoxOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
