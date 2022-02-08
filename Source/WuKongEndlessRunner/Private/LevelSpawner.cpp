@@ -71,9 +71,16 @@ void ALevelSpawner::OnTriggerBoxOverlapBegin(UPrimitiveComponent* HitComp, AActo
 TSubclassOf<ABaseLevel> ALevelSpawner::selectNextLevelToSpawn(ABaseLevel* lastSpawnedLevelRef)
 {
 	TSubclassOf<ABaseLevel> levelToSpawn;
+
+	if (isAllSpawnedLevels(ELevelType::Flat)) {
+		// Random Slope level next
+		levelToSpawn = RepeatingLevelsMap[ELevelType::Slope][FMath::RandRange(0, RepeatingLevelsMap[ELevelType::Slope].Num() - 1)];
+		return levelToSpawn;
+	}
+
 	switch (lastSpawnedLevelRef->LevelType) {
 	case ELevelType::Slope:
-		// Random Flat level next
+		// Random Flat level next (no two slope level consecutively)
 		levelToSpawn = RepeatingLevelsMap[ELevelType::Flat][FMath::RandRange(0, RepeatingLevelsMap[ELevelType::Flat].Num() - 1)];
 		break;
 	case ELevelType::Flat:
@@ -81,5 +88,16 @@ TSubclassOf<ABaseLevel> ALevelSpawner::selectNextLevelToSpawn(ABaseLevel* lastSp
 		levelToSpawn = RepeatingLevels[FMath::RandRange(0, RepeatingLevels.Num() - 1)];
 	}
 	return levelToSpawn;
+}
+
+bool ALevelSpawner::isAllSpawnedLevels(ELevelType levelType)
+{
+	// Is there a Java allMatch() equivalent?
+	for (ABaseLevel* level : SpawnedLevels) {
+		if (level->LevelType != levelType) {
+			return false;
+		}
+	}
+	return true;
 }
 

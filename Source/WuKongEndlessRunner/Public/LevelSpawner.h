@@ -26,6 +26,8 @@ protected:
 
 	TSubclassOf<ABaseLevel> selectNextLevelToSpawn(ABaseLevel* lastSpawnedLevelRef);
 
+	bool isAllSpawnedLevels(ELevelType levelType);
+
 	UPROPERTY()
 	TArray<ABaseLevel*> SpawnedLevels;
 
@@ -34,6 +36,7 @@ protected:
 	ABaseLevel* LastSpawnedLevel;
 	FVector SpawnLocation = FVector();
 
+	// Must be at least 4
 	const int MAX_LEVELS_ACTIVE = 6;
 
 public:	
