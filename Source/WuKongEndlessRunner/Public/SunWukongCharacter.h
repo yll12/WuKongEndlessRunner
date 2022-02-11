@@ -134,6 +134,9 @@ public:
 	UFUNCTION()
 		void UpdateRelativeRotation(float Alpha);
 
+	UFUNCTION()
+		void RotateFinished();
+
 private:
 
 	void JumpPressed();

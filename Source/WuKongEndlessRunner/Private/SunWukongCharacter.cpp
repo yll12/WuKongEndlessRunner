@@ -54,15 +54,24 @@ void ASunWukongCharacter::InitRotationTimelineComp()
 {
 	FOnTimelineFloat UpdateFunctionFloat;
 	UpdateFunctionFloat.BindDynamic(this, &ASunWukongCharacter::UpdateRelativeRotation);
+
+	FOnTimelineEvent OnTimelineFinished;
+	OnTimelineFinished.BindDynamic(this, &ASunWukongCharacter::RotateFinished);
 	if (RotateTimelineFloatCurve)
 	{
 		RotationTimelineComp->AddInterpFloat(RotateTimelineFloatCurve, UpdateFunctionFloat);
+		RotationTimelineComp->SetTimelineFinishedFunc(OnTimelineFinished);
 	}
 }
 
 void ASunWukongCharacter::UpdateRelativeRotation(float Alpha)
 {
 	SetActorRelativeRotation(FRotator(0, FMath::Lerp(-180.0f, 0.0f, Alpha), 0));
+}
+
+void ASunWukongCharacter::RotateFinished()
+{
+	// UE_LOG(LogTemp, Warning, TEXT("Testing!"));
 }
 
 // Called every frame
