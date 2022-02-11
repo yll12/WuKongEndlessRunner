@@ -54,6 +54,9 @@ void ASunWukongCharacter::BeginPlay()
 void ASunWukongCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (CameraBoom) {
+		UE_LOG(LogTemp, Warning, TEXT("Test"));
+	}
 }
 
 // Called to bind functionality to input
