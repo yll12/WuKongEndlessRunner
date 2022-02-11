@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "HitReactInterface.h"
+#include "Components/TimelineComponent.h"
 #include "SunWukongCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttacking);
@@ -40,8 +41,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void InitRotationTimelineComp();
+
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
 
 public:
 
@@ -119,6 +123,16 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AttackSystem")
 		bool IsAlive();
+
+	/* Character Auto Rotate Left/Right */
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+		UCurveFloat* RotateTimelineFloatCurve;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		UTimelineComponent* RotationTimelineComp;
+
+	UFUNCTION()
+		void UpdateRelativeRotation(float Alpha);
 
 private:
 

@@ -35,28 +35,40 @@ ASunWukongCharacter::ASunWukongCharacter()
 	CameraBoom->bDoCollisionTest = false;
 	CameraBoom->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
-
 	// Create an orthographic camera (no perspective) and attach it to the boom
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
 	SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-
 	SideViewCameraComponent->bUsePawnControlRotation = false;
+
+	RotationTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("RotationTimelineComp"));
 }
 
 // Called when the game starts or when spawned
 void ASunWukongCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	InitRotationTimelineComp();
+}
 
+void ASunWukongCharacter::InitRotationTimelineComp()
+{
+	FOnTimelineFloat UpdateFunctionFloat;
+	UpdateFunctionFloat.BindDynamic(this, &ASunWukongCharacter::UpdateRelativeRotation);
+	if (RotateTimelineFloatCurve)
+	{
+		RotationTimelineComp->AddInterpFloat(RotateTimelineFloatCurve, UpdateFunctionFloat);
+	}
+}
+
+void ASunWukongCharacter::UpdateRelativeRotation(float Alpha)
+{
+	SetActorRelativeRotation(FRotator(0, FMath::Lerp(-180.0f, 0.0f, Alpha), 0));
 }
 
 // Called every frame
 void ASunWukongCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (CameraBoom) {
-		UE_LOG(LogTemp, Warning, TEXT("Test"));
-	}
 }
 
 // Called to bind functionality to input
@@ -207,6 +219,9 @@ void ASunWukongCharacter::Attack() {
 void ASunWukongCharacter::MoveRight(float Value)
 {
 	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	if (Value > 0) { // Moving Right
+		RotationTimelineComp->Play();
+	} else if (Value < 0) { // Moving Left
+		RotationTimelineComp->Reverse();
+	}
 }
-
-
