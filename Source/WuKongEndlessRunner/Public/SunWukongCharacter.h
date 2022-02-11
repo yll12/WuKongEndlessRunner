@@ -33,6 +33,7 @@ class WUKONGENDLESSRUNNER_API ASunWukongCharacter : public ACharacter, public IH
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
+	
 public:
 	// Sets default values for this character's properties
 	ASunWukongCharacter();
@@ -46,8 +47,15 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
+	UPROPERTY(VisibleAnywhere)
+		USceneComponent* CloudPlaceHolder;
 
 public:
+
+	FORCEINLINE USceneComponent* GetCloudPlaceHolder()
+	{
+		return CloudPlaceHolder;
+	}
 
 	/** Properties */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AttackSystem)

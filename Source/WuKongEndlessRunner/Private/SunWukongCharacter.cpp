@@ -40,6 +40,9 @@ ASunWukongCharacter::ASunWukongCharacter()
 	SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	SideViewCameraComponent->bUsePawnControlRotation = false;
 
+	CloudPlaceHolder = CreateDefaultSubobject<USceneComponent>(TEXT("CloudPlaceHolder"));
+	CloudPlaceHolder->SetupAttachment(RootComponent);
+
 	RotationTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("RotationTimelineComp"));
 }
 
