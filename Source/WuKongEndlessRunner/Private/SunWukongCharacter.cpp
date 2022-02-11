@@ -28,8 +28,8 @@ ASunWukongCharacter::ASunWukongCharacter()
 	// Create a camera boom attached to the root (capsule)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	//CameraBoom->TargetArmLength = 700.0f;
-	CameraBoom->TargetArmLength = 1500.0f;
+	CameraBoom->TargetArmLength = 700.0f;
+	//CameraBoom->TargetArmLength = 1500.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 40.0f);
 	CameraBoom->SetUsingAbsoluteRotation(true);
 	CameraBoom->bDoCollisionTest = false;
@@ -69,7 +69,8 @@ void ASunWukongCharacter::InitRotationTimelineComp()
 
 void ASunWukongCharacter::UpdateRelativeRotation(float Alpha)
 {
-	SetActorRelativeRotation(FRotator(0, FMath::Lerp(-180.0f, 0.0f, Alpha), 0));
+	SetActorRelativeRotation(FRotator(GetActorRotation().Pitch,
+		FMath::Lerp(-180.0f, 0.0f, Alpha), 0));
 }
 
 void ASunWukongCharacter::RotateFinished()
