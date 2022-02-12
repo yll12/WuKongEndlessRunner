@@ -33,9 +33,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	/** Called for side to side input */
-	void MoveRight(float Value);
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
+protected:
+
+	/** Actor Components */
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* CloudPlaceHolder;
 
@@ -78,14 +82,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HealthSystem)
 		float Health;
 
+	/** Event Delegates */
 	UPROPERTY(BlueprintAssignable)
 		FAttacking AttackingDelegate;
 
 	UPROPERTY(BlueprintAssignable)
 		FBlockedAttack BlockedAttackDelegate;
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -93,7 +95,9 @@ public:
 	// Called to bind functionality to input
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	void calculateNewHealth(float Damage);
+	/** Called for side to side input */
+	UFUNCTION()
+	void MoveRight(float Value);
 
 	/** Attack System */
 	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
@@ -160,6 +164,7 @@ private:
 	void Attack();
 	Direction CalculateDirection(FRotator normalizedRotation);
 	bool IsFacing(AActor* damageCauser);
+	void calculateNewHealth(float Damage);
 
 	void InitRotationTimelineComp();
 
