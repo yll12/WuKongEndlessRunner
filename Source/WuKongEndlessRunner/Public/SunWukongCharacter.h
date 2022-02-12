@@ -25,15 +25,6 @@ class WUKONGENDLESSRUNNER_API ASunWukongCharacter : public ACharacter, public IH
 {
 	GENERATED_BODY()
 	
-	/** Side view camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* SideViewCameraComponent;
-
-	/** Camera boom positioning the camera beside the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class USpringArmComponent* CameraBoom;
-
-	
 public:
 	// Sets default values for this character's properties
 	ASunWukongCharacter();
@@ -42,8 +33,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void InitRotationTimelineComp();
-
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
@@ -51,7 +40,15 @@ protected:
 		USceneComponent* CloudPlaceHolder;
 
 	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* CloudCollision3;
+		class UBoxComponent* CloudCollision;
+
+	/** Side view camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* SideViewCameraComponent;
+
+	/** Camera boom positioning the camera beside the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
 
 public:
 
@@ -62,7 +59,7 @@ public:
 
 	FORCEINLINE UBoxComponent* GetCloudCollision()
 	{
-		return CloudCollision3;
+		return CloudCollision;
 	}
 
 	/** Properties */
@@ -163,4 +160,7 @@ private:
 	void Attack();
 	Direction CalculateDirection(FRotator normalizedRotation);
 	bool IsFacing(AActor* damageCauser);
+
+	void InitRotationTimelineComp();
+
 };

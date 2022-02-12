@@ -44,8 +44,10 @@ ASunWukongCharacter::ASunWukongCharacter()
 	CloudPlaceHolder = CreateDefaultSubobject<USceneComponent>(TEXT("CloudPlaceHolder"));
 	CloudPlaceHolder->SetupAttachment(RootComponent);
 
-	CloudCollision3 = CreateDefaultSubobject<UBoxComponent>(TEXT("CloudCollision3"));
-	CloudCollision3->SetupAttachment(RootComponent);
+	CloudCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("CloudCollision"));
+	CloudCollision->SetupAttachment(RootComponent);
+	CloudCollision->SetCollisionProfileName("Pawn");
+	CloudCollision->SetWorldScale3D(FVector(1.0, 0.75, 0.5));
 
 	RotationTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("RotationTimelineComp"));
 }
