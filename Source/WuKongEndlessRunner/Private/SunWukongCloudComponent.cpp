@@ -47,19 +47,23 @@ void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<class AAct
 		SunWuKongCloudRef = nullptr;
 	}
 	else {
-		FVector SpawnLocation;
-		if (sunWuKongReference->GetActorRotation().Yaw <= -90) {
-			SpawnLocation = sunWuKongReference->GetActorLocation();
-			SpawnLocation.X = SpawnLocation.X + 800;
+		if (CanActivateFly) {
+			CanActivateFly = false;
+			FVector SpawnLocation;
+			if (sunWuKongReference->GetActorRotation().Yaw <= -90) {
+				SpawnLocation = sunWuKongReference->GetActorLocation();
+				SpawnLocation.X = SpawnLocation.X + 800;
+			}
+			else {
+				SpawnLocation = sunWuKongReference->GetActorLocation();
+				SpawnLocation.X = SpawnLocation.X - 800;
+			}
+			SunWuKongCloudInitialLocation = SpawnLocation;
+			SunWuKongCloudRef = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnLocation, sunWuKongReference->GetActorRotation());
+			SunWuKongCloudRef->AttachToComponent(sunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			RotationTimelineComp->PlayFromStart();
+
 		}
-		else {
-			SpawnLocation = sunWuKongReference->GetActorLocation();
-			SpawnLocation.X = SpawnLocation.X - 800;
-		}
-		SunWuKongCloudInitialLocation = SpawnLocation;
-		SunWuKongCloudRef = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnLocation, sunWuKongReference->GetActorRotation());
-		SunWuKongCloudRef->AttachToComponent(sunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-		RotationTimelineComp->PlayFromStart();
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Toggling Finished"));
 }

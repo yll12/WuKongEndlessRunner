@@ -27,7 +27,7 @@ protected:
 	AActor* SunWuKongCloudRef;
 	FVector SunWuKongCloudInitialLocation;
 
-	bool CanActivateFly;
+	bool CanActivateFly = true;
 	bool CanDeactivateFly;
 
 public:	
