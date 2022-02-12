@@ -27,6 +27,9 @@ protected:
 	AActor* SunWuKongCloudRef;
 	FVector SunWuKongCloudInitialLocation;
 
+	bool CanActivateFly;
+	bool CanDeactivateFly;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -46,4 +49,7 @@ public:
 
 	UFUNCTION()
 		void RotateFinished();
+
+	UFUNCTION()
+		void TriggerJump();
 };

@@ -4,6 +4,7 @@
 #include "SunWukongCloudComponent.h"
 #include "SunWukongCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
 USunWukongCloudComponent::USunWukongCloudComponent()
@@ -69,10 +70,15 @@ void USunWukongCloudComponent::InitRotationTimelineComp()
 
 	FOnTimelineEvent OnTimelineFinished;
 	OnTimelineFinished.BindDynamic(this, &USunWukongCloudComponent::RotateFinished);
+
+	FOnTimelineEvent OnTimelineSpecificTime;
+	OnTimelineSpecificTime.BindDynamic(this, &USunWukongCloudComponent::TriggerJump);
+
 	if (RotateTimelineFloatCurve)
 	{
 		RotationTimelineComp->AddInterpFloat(RotateTimelineFloatCurve, UpdateFunctionFloat);
 		RotationTimelineComp->SetTimelineFinishedFunc(OnTimelineFinished);
+		RotationTimelineComp->AddEvent(0.1, OnTimelineSpecificTime);
 	}
 }
 
@@ -85,5 +91,13 @@ void USunWukongCloudComponent::UpdateRelativeRotation(float Alpha)
 void USunWukongCloudComponent::RotateFinished()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Testing!"));
+	CanDeactivateFly = true;
+	sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 	UE_LOG(LogTemp, Warning, TEXT("Finished!"));
+}
+
+void USunWukongCloudComponent::TriggerJump()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Triggering Jump!"));
+	sunWuKongReference->Jump();
 }
