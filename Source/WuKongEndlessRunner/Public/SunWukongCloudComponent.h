@@ -8,6 +8,7 @@
 #include "SunWukongCloudComponent.generated.h"
 
 class ASunWuKongCloud;
+class ASunWukongCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class WUKONGENDLESSRUNNER_API USunWukongCloudComponent : public UActorComponent
@@ -22,43 +23,46 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	void InitRotationTimelineComp();
+public:
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+protected:
+
+	void InitSummonCloudTimelineComp();
 	void InitDeactivateTimelineComp();
 
-	class ASunWukongCharacter* sunWuKongReference;
+	ASunWukongCharacter* SunWuKongReference;
 	ASunWuKongCloud* SunWuKongCloudRef;
 	FVector SunWuKongCloudInitialLocation;
 	FVector SunWuKongCloudFinalLocation;
 
-	bool CanActivateFly = true;
+	bool CanActivateFly;
 	bool CanDeactivateFly;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Toggle Cloud")
 		void ToggleCloud(TSubclassOf<ASunWuKongCloud> CloudToSpawn);
 
-	/* Timeline Test */
+	/* Timeline Summon Cloud */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
-		UCurveFloat* RotateTimelineFloatCurve;
+		UCurveFloat* SummonCloudTimelineFloatCurve;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		UTimelineComponent* RotationTimelineComp;
+		UTimelineComponent* SummonCloudTimelineComp;
 
 	UFUNCTION()
-		void UpdateRelativeRotation(float Alpha);
+		void UpdateSummonCloud(float Alpha);
 
 	UFUNCTION()
-		void RotateFinished();
+		void SummonFinished();
 
 	UFUNCTION()
 		void TriggerJump();
 
 
-	/* Timeline Deactivate */
+	/* Timeline Deactivate Cloud*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
 		UCurveFloat* DeactivateTimelineFloatCurve;
 

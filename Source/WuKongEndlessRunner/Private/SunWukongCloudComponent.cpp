@@ -15,8 +15,11 @@ USunWukongCloudComponent::USunWukongCloudComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	RotationTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("RotationTimelineComp"));
+	SummonCloudTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("SummonCloudTimelineComp"));
 	DeactivateTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("DeactivateTimelineComp"));
+
+	CanActivateFly = true;
+	CanDeactivateFly = false;
 }
 
 
@@ -25,13 +28,11 @@ void USunWukongCloudComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitRotationTimelineComp();
-
+	InitSummonCloudTimelineComp();
 	InitDeactivateTimelineComp();
 
-	AActor* owner = GetOwner();
-
-	sunWuKongReference = Cast<ASunWukongCharacter>(owner);
+	/* Owner must be a SunWuKongCharacter */
+	SunWuKongReference = Cast<ASunWukongCharacter>(GetOwner());
 
 }
 
@@ -46,93 +47,89 @@ void USunWukongCloudComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<ASunWuKongCloud> CloudToSpawn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Toggling"));
-	if (SunWuKongCloudRef) {
-		UE_LOG(LogTemp, Warning, TEXT("Here"));
-		if (CanDeactivateFly) {
-			CanDeactivateFly = false;
-			sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-			sunWuKongReference->Jump();
-			sunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
-			SunWuKongCloudRef->AdjustCloudPSToWuKongVelocity = false;
-			FVector SpawnLocation;
-			if (sunWuKongReference->GetActorRotation().Yaw <= -90) {
-				SpawnLocation = sunWuKongReference->GetActorLocation();
-				SpawnLocation.X = SpawnLocation.X - 1500;
+	if (SunWuKongReference) {
+		if (SunWuKongCloudRef) {
+			if (CanDeactivateFly) {
+				CanDeactivateFly = false;
+				SunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+				SunWuKongReference->Jump();
+				SunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
+				SunWuKongCloudRef->AdjustCloudPSToWuKongVelocity = false;
+				FVector SpawnLocation;
+				if (SunWuKongReference->GetActorRotation().Yaw <= -90) {
+					SpawnLocation = SunWuKongReference->GetActorLocation();
+					SpawnLocation.X = SpawnLocation.X - 1500;
+				}
+				else {
+					SpawnLocation = SunWuKongReference->GetActorLocation();
+					SpawnLocation.X = SpawnLocation.X + 1500;
+				}
+				SunWuKongCloudFinalLocation = SpawnLocation;
+				DeactivateTimelineComp->PlayFromStart();
 			}
-			else {
-				SpawnLocation = sunWuKongReference->GetActorLocation();
-				SpawnLocation.X = SpawnLocation.X + 1500;
-			}
-			SunWuKongCloudFinalLocation = SpawnLocation;
-			DeactivateTimelineComp->PlayFromStart();
-		}
-
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
-		if (CanActivateFly) {
-			CanActivateFly = false;
-			FVector SpawnLocation;
-			if (sunWuKongReference->GetActorRotation().Yaw <= -90) {
-				SpawnLocation = sunWuKongReference->GetActorLocation();
-				SpawnLocation.X = SpawnLocation.X + 800;
-			}
-			else {
-				SpawnLocation = sunWuKongReference->GetActorLocation();
-				SpawnLocation.X = SpawnLocation.X - 800;
-			}
-			SunWuKongCloudInitialLocation = SpawnLocation;
-			SunWuKongCloudRef = GetWorld()->SpawnActor<ASunWuKongCloud>(CloudToSpawn, SpawnLocation, sunWuKongReference->GetActorRotation());
-			SunWuKongCloudRef->AttachToComponent(sunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-			RotationTimelineComp->PlayFromStart();
 
 		}
+		else {
+			if (CanActivateFly) {
+				CanActivateFly = false;
+				FVector SpawnLocation;
+				if (SunWuKongReference->GetActorRotation().Yaw <= -90) {
+					SpawnLocation = SunWuKongReference->GetActorLocation();
+					SpawnLocation.X = SpawnLocation.X + 800;
+				}
+				else {
+					SpawnLocation = SunWuKongReference->GetActorLocation();
+					SpawnLocation.X = SpawnLocation.X - 800;
+				}
+				SunWuKongCloudInitialLocation = SpawnLocation;
+				SunWuKongCloudRef = GetWorld()->SpawnActor<ASunWuKongCloud>(CloudToSpawn, SpawnLocation, SunWuKongReference->GetActorRotation());
+				SunWuKongCloudRef->AttachToComponent(SunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+				SummonCloudTimelineComp->PlayFromStart();
+
+			}
+		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Toggling Finished"));
 }
 
-void USunWukongCloudComponent::InitRotationTimelineComp()
+void USunWukongCloudComponent::InitSummonCloudTimelineComp()
 {
 	FOnTimelineFloat UpdateFunctionFloat;
-	UpdateFunctionFloat.BindDynamic(this, &USunWukongCloudComponent::UpdateRelativeRotation);
+	UpdateFunctionFloat.BindDynamic(this, &USunWukongCloudComponent::UpdateSummonCloud);
 
 	FOnTimelineEvent OnTimelineFinished;
-	OnTimelineFinished.BindDynamic(this, &USunWukongCloudComponent::RotateFinished);
+	OnTimelineFinished.BindDynamic(this, &USunWukongCloudComponent::SummonFinished);
 
 	FOnTimelineEvent OnTimelineSpecificTime;
 	OnTimelineSpecificTime.BindDynamic(this, &USunWukongCloudComponent::TriggerJump);
 
-	if (RotateTimelineFloatCurve)
+	if (SummonCloudTimelineFloatCurve)
 	{
-		RotationTimelineComp->AddInterpFloat(RotateTimelineFloatCurve, UpdateFunctionFloat);
-		RotationTimelineComp->SetTimelineFinishedFunc(OnTimelineFinished);
-		RotationTimelineComp->AddEvent(0.1, OnTimelineSpecificTime);
+		SummonCloudTimelineComp->AddInterpFloat(SummonCloudTimelineFloatCurve, UpdateFunctionFloat);
+		SummonCloudTimelineComp->SetTimelineFinishedFunc(OnTimelineFinished);
+		SummonCloudTimelineComp->AddEvent(0.1, OnTimelineSpecificTime);
 	}
 }
 
-void USunWukongCloudComponent::UpdateRelativeRotation(float Alpha)
+void USunWukongCloudComponent::UpdateSummonCloud(float Alpha)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Testing %f"), Alpha);
-	SunWuKongCloudRef->SetActorLocation(FMath::Lerp(SunWuKongCloudInitialLocation, sunWuKongReference->GetCloudPlaceHolder()->GetComponentLocation(), Alpha));
+	SunWuKongCloudRef->SetActorLocation(
+		FMath::Lerp(SunWuKongCloudInitialLocation, 
+			SunWuKongReference->GetCloudPlaceHolder()->GetComponentLocation(), Alpha));
 }
 
-void USunWukongCloudComponent::RotateFinished()
+void USunWukongCloudComponent::SummonFinished()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Testing!"));
 	CanDeactivateFly = true;
-	sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	SunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 	SunWuKongCloudRef->AdjustCloudPSToWuKongVelocity = true;
-	UE_LOG(LogTemp, Warning, TEXT("Finished!"));
 }
 
 void USunWukongCloudComponent::TriggerJump()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Triggering Jump!"));
-	if (!sunWuKongReference->GetCharacterMovement()->IsFalling()) {
-		sunWuKongReference->Jump();
+	if (!SunWuKongReference->GetCharacterMovement()->IsFalling()) {
+		SunWuKongReference->Jump();
 	}
-	sunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, -130), false, nullptr, ETeleportType::TeleportPhysics);
+	SunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, -130), false, nullptr, ETeleportType::TeleportPhysics);
 }
 
 
@@ -153,16 +150,14 @@ void USunWukongCloudComponent::InitDeactivateTimelineComp()
 
 void USunWukongCloudComponent::UpdateDeactivate(float Alpha)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Testing %f"), Alpha);
-	SunWuKongCloudRef->SetActorLocation(FMath::Lerp(sunWuKongReference->GetCloudPlaceHolder()->GetComponentLocation(), SunWuKongCloudFinalLocation, Alpha));
+	SunWuKongCloudRef->SetActorLocation(
+		FMath::Lerp(SunWuKongReference->GetCloudPlaceHolder()->GetComponentLocation(), 
+			SunWuKongCloudFinalLocation, Alpha));
 }
 
 void USunWukongCloudComponent::DeactivateFinished()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Testing!"));
 	SunWuKongCloudRef->Destroy();
 	SunWuKongCloudRef = nullptr;
 	CanActivateFly = true;
-	//sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-	UE_LOG(LogTemp, Warning, TEXT("Finished!"));
 }
