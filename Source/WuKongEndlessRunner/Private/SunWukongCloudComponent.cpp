@@ -3,6 +3,7 @@
 
 #include "SunWukongCloudComponent.h"
 #include "SunWukongCharacter.h"
+#include "SunWuKongCloud.h"
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/BoxComponent.h"
@@ -43,7 +44,7 @@ void USunWukongCloudComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// ...
 }
 
-void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<class AActor> ClassToSpawn)
+void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<ASunWuKongCloud> CloudToSpawn)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Toggling"));
 	if (SunWuKongCloudRef) {
@@ -53,6 +54,7 @@ void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<class AAct
 			sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 			sunWuKongReference->Jump();
 			sunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
+			SunWuKongCloudRef->AdjustCloudPSToWuKongVelocity = false;
 			FVector SpawnLocation;
 			if (sunWuKongReference->GetActorRotation().Yaw <= -90) {
 				SpawnLocation = sunWuKongReference->GetActorLocation();
@@ -81,7 +83,7 @@ void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<class AAct
 				SpawnLocation.X = SpawnLocation.X - 800;
 			}
 			SunWuKongCloudInitialLocation = SpawnLocation;
-			SunWuKongCloudRef = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnLocation, sunWuKongReference->GetActorRotation());
+			SunWuKongCloudRef = GetWorld()->SpawnActor<ASunWuKongCloud>(CloudToSpawn, SpawnLocation, sunWuKongReference->GetActorRotation());
 			SunWuKongCloudRef->AttachToComponent(sunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 			RotationTimelineComp->PlayFromStart();
 
@@ -120,6 +122,7 @@ void USunWukongCloudComponent::RotateFinished()
 	UE_LOG(LogTemp, Warning, TEXT("Testing!"));
 	CanDeactivateFly = true;
 	sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	SunWuKongCloudRef->AdjustCloudPSToWuKongVelocity = true;
 	UE_LOG(LogTemp, Warning, TEXT("Finished!"));
 }
 

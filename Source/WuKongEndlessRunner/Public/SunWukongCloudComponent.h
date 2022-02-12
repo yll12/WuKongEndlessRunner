@@ -7,6 +7,7 @@
 #include "Components/TimelineComponent.h"
 #include "SunWukongCloudComponent.generated.h"
 
+class ASunWuKongCloud;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class WUKONGENDLESSRUNNER_API USunWukongCloudComponent : public UActorComponent
@@ -26,7 +27,7 @@ protected:
 	void InitDeactivateTimelineComp();
 
 	class ASunWukongCharacter* sunWuKongReference;
-	AActor* SunWuKongCloudRef;
+	ASunWuKongCloud* SunWuKongCloudRef;
 	FVector SunWuKongCloudInitialLocation;
 	FVector SunWuKongCloudFinalLocation;
 
@@ -38,7 +39,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Toggle Cloud")
-		void ToggleCloud(TSubclassOf<class AActor> ClassToSpawn);
+		void ToggleCloud(TSubclassOf<ASunWuKongCloud> CloudToSpawn);
 
 	/* Timeline Test */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
