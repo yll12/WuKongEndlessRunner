@@ -15,6 +15,7 @@ USunWukongCloudComponent::USunWukongCloudComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	RotationTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("RotationTimelineComp"));
+	DeactivateTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("DeactivateTimelineComp"));
 }
 
 
@@ -24,6 +25,8 @@ void USunWukongCloudComponent::BeginPlay()
 	Super::BeginPlay();
 
 	InitRotationTimelineComp();
+
+	InitDeactivateTimelineComp();
 
 	AActor* owner = GetOwner();
 
@@ -44,9 +47,28 @@ void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<class AAct
 {
 	UE_LOG(LogTemp, Warning, TEXT("Toggling"));
 	if (SunWuKongCloudRef) {
-		SunWuKongCloudRef = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("Here"));
+		if (CanDeactivateFly) {
+			CanDeactivateFly = false;
+			sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			sunWuKongReference->Jump();
+			sunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
+			FVector SpawnLocation;
+			if (sunWuKongReference->GetActorRotation().Yaw <= -90) {
+				SpawnLocation = sunWuKongReference->GetActorLocation();
+				SpawnLocation.X = SpawnLocation.X - 1500;
+			}
+			else {
+				SpawnLocation = sunWuKongReference->GetActorLocation();
+				SpawnLocation.X = SpawnLocation.X + 1500;
+			}
+			SunWuKongCloudFinalLocation = SpawnLocation;
+			DeactivateTimelineComp->PlayFromStart();
+		}
+
 	}
 	else {
+		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 		if (CanActivateFly) {
 			CanActivateFly = false;
 			FVector SpawnLocation;
@@ -104,6 +126,40 @@ void USunWukongCloudComponent::RotateFinished()
 void USunWukongCloudComponent::TriggerJump()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Triggering Jump!"));
+	if (!sunWuKongReference->GetCharacterMovement()->IsFalling()) {
+		sunWuKongReference->Jump();
+	}
 	sunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, -130), false, nullptr, ETeleportType::TeleportPhysics);
-	sunWuKongReference->Jump();
+}
+
+
+void USunWukongCloudComponent::InitDeactivateTimelineComp()
+{
+	FOnTimelineFloat UpdateFunctionFloat;
+	UpdateFunctionFloat.BindDynamic(this, &USunWukongCloudComponent::UpdateDeactivate);
+
+	FOnTimelineEvent OnTimelineFinished;
+	OnTimelineFinished.BindDynamic(this, &USunWukongCloudComponent::DeactivateFinished);
+
+	if (DeactivateTimelineFloatCurve)
+	{
+		DeactivateTimelineComp->AddInterpFloat(DeactivateTimelineFloatCurve, UpdateFunctionFloat);
+		DeactivateTimelineComp->SetTimelineFinishedFunc(OnTimelineFinished);
+	}
+}
+
+void USunWukongCloudComponent::UpdateDeactivate(float Alpha)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Testing %f"), Alpha);
+	SunWuKongCloudRef->SetActorLocation(FMath::Lerp(sunWuKongReference->GetCloudPlaceHolder()->GetComponentLocation(), SunWuKongCloudFinalLocation, Alpha));
+}
+
+void USunWukongCloudComponent::DeactivateFinished()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Testing!"));
+	SunWuKongCloudRef->Destroy();
+	SunWuKongCloudRef = nullptr;
+	CanActivateFly = true;
+	//sunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	UE_LOG(LogTemp, Warning, TEXT("Finished!"));
 }

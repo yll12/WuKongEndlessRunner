@@ -23,9 +23,12 @@ protected:
 
 	void InitRotationTimelineComp();
 
+	void InitDeactivateTimelineComp();
+
 	class ASunWukongCharacter* sunWuKongReference;
 	AActor* SunWuKongCloudRef;
 	FVector SunWuKongCloudInitialLocation;
+	FVector SunWuKongCloudFinalLocation;
 
 	bool CanActivateFly = true;
 	bool CanDeactivateFly;
@@ -52,4 +55,19 @@ public:
 
 	UFUNCTION()
 		void TriggerJump();
+
+
+	/* Timeline Deactivate */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
+		UCurveFloat* DeactivateTimelineFloatCurve;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		UTimelineComponent* DeactivateTimelineComp;
+
+	UFUNCTION()
+		void UpdateDeactivate(float Alpha);
+
+	UFUNCTION()
+		void DeactivateFinished();
+
 };
