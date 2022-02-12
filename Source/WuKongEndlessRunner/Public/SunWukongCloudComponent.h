@@ -32,6 +32,9 @@ protected:
 	void InitSummonCloudTimelineComp();
 	void InitDeactivateTimelineComp();
 
+	FVector AddOffsetToTheFrontRelativeToActor(float distance);
+	FVector AddOffsetToTheBackRelativeToActor(float distance);
+
 	ASunWukongCharacter* SunWuKongReference;
 	ASunWuKongCloud* SunWuKongCloudRef;
 	FVector SunWuKongCloudInitialLocation;

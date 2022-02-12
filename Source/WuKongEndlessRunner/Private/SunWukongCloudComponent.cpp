@@ -36,59 +36,52 @@ void USunWukongCloudComponent::BeginPlay()
 
 }
 
-
 // Called every frame
 void USunWukongCloudComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
 }
 
 void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<ASunWuKongCloud> CloudToSpawn)
 {
 	if (SunWuKongReference) {
-		if (SunWuKongCloudRef) {
-			if (CanDeactivateFly) {
-				CanDeactivateFly = false;
-				SunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-				SunWuKongReference->Jump();
-				SunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
-				SunWuKongCloudRef->AdjustCloudPSToWuKongVelocity = false;
-				FVector SpawnLocation;
-				if (SunWuKongReference->GetActorRotation().Yaw <= -90) {
-					SpawnLocation = SunWuKongReference->GetActorLocation();
-					SpawnLocation.X = SpawnLocation.X - 1500;
-				}
-				else {
-					SpawnLocation = SunWuKongReference->GetActorLocation();
-					SpawnLocation.X = SpawnLocation.X + 1500;
-				}
-				SunWuKongCloudFinalLocation = SpawnLocation;
-				DeactivateTimelineComp->PlayFromStart();
-			}
-
+		if (SunWuKongCloudRef && CanDeactivateFly) {
+			CanDeactivateFly = false;
+			SunWuKongReference->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			SunWuKongReference->Jump();
+			SunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
+			SunWuKongCloudRef->AdjustCloudPSToWuKongVelocity = false;
+			SunWuKongCloudFinalLocation = AddOffsetToTheFrontRelativeToActor(1500.0f);
+			DeactivateTimelineComp->PlayFromStart();
 		}
-		else {
-			if (CanActivateFly) {
-				CanActivateFly = false;
-				FVector SpawnLocation;
-				if (SunWuKongReference->GetActorRotation().Yaw <= -90) {
-					SpawnLocation = SunWuKongReference->GetActorLocation();
-					SpawnLocation.X = SpawnLocation.X + 800;
-				}
-				else {
-					SpawnLocation = SunWuKongReference->GetActorLocation();
-					SpawnLocation.X = SpawnLocation.X - 800;
-				}
-				SunWuKongCloudInitialLocation = SpawnLocation;
-				SunWuKongCloudRef = GetWorld()->SpawnActor<ASunWuKongCloud>(CloudToSpawn, SpawnLocation, SunWuKongReference->GetActorRotation());
-				SunWuKongCloudRef->AttachToComponent(SunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-				SummonCloudTimelineComp->PlayFromStart();
+		else if (CanActivateFly) {
+			CanActivateFly = false;
+			SunWuKongCloudInitialLocation = AddOffsetToTheBackRelativeToActor(800);
+			SunWuKongCloudRef = GetWorld()->SpawnActor<ASunWuKongCloud>(CloudToSpawn, SunWuKongCloudInitialLocation, SunWuKongReference->GetActorRotation());
+			SunWuKongCloudRef->AttachToComponent(SunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			SummonCloudTimelineComp->PlayFromStart();
 
-			}
 		}
 	}
+}
+
+FVector USunWukongCloudComponent::AddOffsetToTheFrontRelativeToActor(float distance)
+{
+	FVector result = SunWuKongReference->GetActorLocation();
+	if (SunWuKongReference->GetActorRotation().Yaw <= -90) {
+		result.X -= distance;
+	}
+	else {
+		result.X += distance;
+	}
+
+	return result;
+}
+
+FVector USunWukongCloudComponent::AddOffsetToTheBackRelativeToActor(float distance)
+{
+	return AddOffsetToTheFrontRelativeToActor(-distance);
 }
 
 void USunWukongCloudComponent::InitSummonCloudTimelineComp()
@@ -131,7 +124,6 @@ void USunWukongCloudComponent::TriggerJump()
 	}
 	SunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, -130), false, nullptr, ETeleportType::TeleportPhysics);
 }
-
 
 void USunWukongCloudComponent::InitDeactivateTimelineComp()
 {
