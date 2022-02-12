@@ -153,6 +153,9 @@ public:
 	UFUNCTION()
 		void RotateFinished();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Jump")
+		void ToggleFlying();
+
 private:
 
 	void JumpPressed();

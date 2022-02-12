@@ -201,7 +201,9 @@ bool ASunWukongCharacter::IsFacing(AActor* actor)
 void ASunWukongCharacter::JumpPressed()
 {
 	UCharacterMovementComponent* charactermovement = GetCharacterMovement();
-	if (!charactermovement->IsFalling()) {
+	if (charactermovement->IsFlying()) {
+		ToggleFlying();
+	} else if (!charactermovement->IsFalling()) {
 		Jump();
 	}
 }
