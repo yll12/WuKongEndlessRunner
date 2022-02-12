@@ -5,6 +5,7 @@
 #include "SunWukongCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values for this component's properties
 USunWukongCloudComponent::USunWukongCloudComponent()
@@ -99,5 +100,6 @@ void USunWukongCloudComponent::RotateFinished()
 void USunWukongCloudComponent::TriggerJump()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Triggering Jump!"));
+	sunWuKongReference->GetCloudCollision()->SetRelativeLocation(FVector(0, 0, -130), false, nullptr, ETeleportType::TeleportPhysics);
 	sunWuKongReference->Jump();
 }

@@ -6,6 +6,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ASunWukongCharacter::ASunWukongCharacter()
@@ -42,6 +43,9 @@ ASunWukongCharacter::ASunWukongCharacter()
 
 	CloudPlaceHolder = CreateDefaultSubobject<USceneComponent>(TEXT("CloudPlaceHolder"));
 	CloudPlaceHolder->SetupAttachment(RootComponent);
+
+	CloudCollision3 = CreateDefaultSubobject<UBoxComponent>(TEXT("CloudCollision3"));
+	CloudCollision3->SetupAttachment(RootComponent);
 
 	RotationTimelineComp = CreateDefaultSubobject<UTimelineComponent>(TEXT("RotationTimelineComp"));
 }

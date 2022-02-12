@@ -50,11 +50,19 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* CloudPlaceHolder;
 
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* CloudCollision3;
+
 public:
 
 	FORCEINLINE USceneComponent* GetCloudPlaceHolder()
 	{
 		return CloudPlaceHolder;
+	}
+
+	FORCEINLINE UBoxComponent* GetCloudCollision()
+	{
+		return CloudCollision3;
 	}
 
 	/** Properties */
