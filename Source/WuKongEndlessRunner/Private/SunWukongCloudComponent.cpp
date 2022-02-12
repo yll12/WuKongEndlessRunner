@@ -61,7 +61,6 @@ void USunWukongCloudComponent::ToggleCloud_Implementation(TSubclassOf<ASunWuKong
 			SunWuKongCloudRef = GetWorld()->SpawnActor<ASunWuKongCloud>(CloudToSpawn, SunWuKongCloudInitialLocation, SunWuKongReference->GetActorRotation());
 			SunWuKongCloudRef->AttachToComponent(SunWuKongReference->GetCloudPlaceHolder(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 			SummonCloudTimelineComp->PlayFromStart();
-
 		}
 	}
 }
