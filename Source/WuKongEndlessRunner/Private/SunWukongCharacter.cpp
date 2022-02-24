@@ -114,7 +114,7 @@ float ASunWukongCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 			else {
 				CharacterHasDied();
 				//DetachFromControllerPendingDestroy();
-				//GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
+				GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
 			}
 		}
 	}
