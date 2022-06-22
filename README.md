@@ -18,6 +18,8 @@ Features I implemented:
 * Health and stamina HUD
 * Block out the area when in combat
 * A cutscene
+* Collectibles
+* End game screen
 * AI: ability to chase player on sight, strafe, block, and attack
 
 Assets I used:
