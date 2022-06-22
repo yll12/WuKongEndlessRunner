@@ -2,6 +2,8 @@
 ## About The Project
 <a href="https://youtu.be/Ph1tOzIDEV8">Youtube preview</a>
 
+This is the second project after <a href="https://github.com/yll12/WuKongHourOfCode">WuKongHourOfCode</a>
+
 Features I implemented:
 * Endless, randomised, 2D platform, based on a set of predefined levels. See <a href="https://github.com/yll12/WuKongEndlessRunner/blob/master/Source/WuKongEndlessRunner/Private/LevelSpawner.cpp">LevelSpawner.cpp</a>
 * Extracted logic into Actor components to be used by any actors:
