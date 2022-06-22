@@ -1,30 +1,29 @@
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-<a href="https://youtu.be/YmqvZnoWNvU">Youtube preview</a>
+<a href="https://youtu.be/Ph1tOzIDEV8">Youtube preview</a>
 
 Features I implemented:
-* Wukong's ability to attack(4-hit combo with particle effects), block, sprint, lock-on target
-* Health and stamina HUD
-* Block out the area when in combat
-* A cutscene
-* Collectibles
+* Endless, randomised, 2D platform, based on a set of predefined levels. See <a href="https://github.com/yll12/WuKongEndlessRunner/blob/master/Source/WuKongEndlessRunner/Private/LevelSpawner.cpp">LevelSpawner.cpp</a>
+* Extracted logic into Actor components to be used by any actors:
+  * HealthAndTakeDamage
+  * Death
+  * EnemyWeaponEffect
+  * AttackCombo
+  * HitReact
+  * Superarmor (Enable certain period where the actor cannot be interrupted)
+* Health HUD
+* Wukong's cloud summon/unsummon, particle effects depending on velocity
+* Wukong double jump (using backflip for the double jump animation)
 * End game screen
-* AI: ability to chase player on sight, strafe, block, and attack
+* Extracted some common AI task/decator in preparation for reusing AI logic
+  *  IsPlayerActorDead
+  *  AttackTarget
+  *  RotateToFaceTarget
 
 Assets I used:
 * Unreal Engine Hour of Code
 * Paragon Wukong
+* Paragon Minions
 * Sound Phenomenon Fantasy Orchestra
 
 ### Built With
