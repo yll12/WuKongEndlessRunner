@@ -17,7 +17,7 @@ Features I implemented:
   * Superarmor (Enable certain period where the actor cannot be interrupted)
 * Health HUD
 * Wukong's cloud summon/unsummon, particle effects depending on velocity
-* Wukong double jump (using backflip for the double jump animation)
+* Wukong double jump (used <a href="https://www.mixamo.com/#/">Mixamo</a>'s front flip animation, readjusted to Wukong's skeleton for the double jump animation)
 * End game screen
 * Extracted some common AI task/decator in preparation for reusing AI logic
   *  IsPlayerActorDead
