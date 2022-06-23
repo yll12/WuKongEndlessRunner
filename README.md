@@ -2,6 +2,8 @@
 ## About The Project
 <a href="https://youtu.be/Ph1tOzIDEV8">Youtube preview</a>
 
+[![Youtube preview](https://img.youtube.com/vi/Ph1tOzIDEV8/0.jpg)](https://youtu.be/Ph1tOzIDEV8)
+
 This is the second project after <a href="https://github.com/yll12/WuKongHourOfCode">WuKongHourOfCode</a>
 
 Features I implemented:
